@@ -3,7 +3,7 @@
 import { ArrowUp, RotateCw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useDataChat } from '@/hooks/useDataChat';
+import { CHAT_ID, useChat } from './DataChatProvider';
 import { closeOpenBold, parseRichText } from '@/lib/format/richText';
 import styles from './DataChat.module.css';
 
@@ -12,9 +12,12 @@ const SUGERENCIAS = [
   '¿Qué producto tiene mejor ROI?',
   '¿Qué productos están en riesgo?',
   '¿A qué categorías debo poner atención?',
+  '¿Qué pasa si bajo 15% la Bolsa tote?',
+  '¿Qué se compra junto con el Labial mate rojo?',
+  '¿Estoy listo para el Buen Fin?',
 ] as const;
 
-const PLACEHOLDER = 'Pregunta sobre tus datos, ej. ¿qué producto me deja más ganancia?';
+const PLACEHOLDER = 'Pregunta sobre tus datos, ej. ¿y si subo 10% la Sudadera?';
 
 // What the agent is doing while it calls each tool.
 const HERRAMIENTAS: Readonly<Record<string, string>> = {
@@ -23,6 +26,9 @@ const HERRAMIENTAS: Readonly<Record<string, string>> = {
   detalle_producto: 'Buscando el producto',
   productos_en_riesgo: 'Revisando productos en riesgo',
   estadisticas_categorias: 'Analizando categorías',
+  simular_escenario: 'Simulando el escenario',
+  compras_juntas: 'Buscando lo que se compra junto',
+  fechas_clave: 'Revisando las próximas fechas',
 };
 
 function Thinking({ herramienta }: { readonly herramienta: string | null }) {
@@ -55,7 +61,7 @@ function RichText({ texto }: { readonly texto: string }) {
 }
 
 export function DataChat() {
-  const { mensajes, enCurso, preguntar, reintentar, pensando, error } = useDataChat();
+  const { mensajes, enCurso, preguntar, reintentar, pensando, error } = useChat();
   const [borrador, setBorrador] = useState('');
   const lista = useRef<HTMLDivElement>(null);
   const largo = enCurso?.texto.length ?? 0;
@@ -73,7 +79,7 @@ export function DataChat() {
   };
 
   return (
-    <div className={styles.chat}>
+    <div className={styles.chat} id={CHAT_ID}>
       <h3 className={styles.title}>Pregúntale a tus datos</h3>
 
       {mensajes.length === 0 && (

@@ -1,4 +1,4 @@
-import type { AiSummary, ChatMessage, PromoFormato, PromoTipo } from '@/lib/ai/schemas';
+import type { AiSummary, ChatMessage, PromoFormato, PromoTipo, WhatIfAi } from '@/lib/ai/schemas';
 import type { StoreData } from '@/lib/domain/types';
 
 export type Archivo = { readonly nombre: string; readonly tamano: number };
@@ -22,11 +22,13 @@ export type State =
       readonly resumen: AiSummary | null;
       readonly promo: PromoRequest | null;
       readonly chat: readonly ChatMessage[];
+      readonly whatIf: WhatIfAi | null;
     };
 
 export type Action =
   | { readonly type: 'cargar'; readonly data: StoreData; readonly archivo: Archivo }
   | { readonly type: 'resumen'; readonly resumen: AiSummary }
+  | { readonly type: 'whatif'; readonly whatIf: WhatIfAi }
   | { readonly type: 'promo'; readonly promo: PromoRequest }
   | { readonly type: 'chat'; readonly mensaje: ChatMessage }
   | { readonly type: 'reiniciar' };
@@ -36,7 +38,9 @@ export const initialState: State = { status: 'vacio' };
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'cargar':
-      return { status: 'listo', archivo: action.archivo, data: action.data, resumen: null, promo: null, chat: [] };
+      return { status: 'listo', archivo: action.archivo, data: action.data, resumen: null, promo: null, chat: [], whatIf: null };
+    case 'whatif':
+      return state.status === 'listo' ? { ...state, whatIf: action.whatIf } : state;
     case 'resumen':
       return state.status === 'listo' ? { ...state, resumen: action.resumen } : state;
     case 'promo':

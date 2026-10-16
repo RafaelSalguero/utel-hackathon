@@ -3,7 +3,8 @@ import { z } from 'zod';
 import { streamAnswerWithTools } from '@/lib/ai/chat';
 import { MODELO_CHAT, SYSTEM_CHAT } from '@/lib/ai/prompts';
 import { ChatRequestSchema } from '@/lib/ai/schemas';
-import { CRITERIOS, findProducts, rankProducts, riskProducts, storeOverview } from '@/lib/domain/insights';
+import { CRITERIOS, findProducts, pairsFor, rankProducts, riskProducts, storeOverview } from '@/lib/domain/insights';
+import { simulate, type Escenario } from '@/lib/domain/whatif';
 
 const MAX_BODY = 200_000; // bytes; ~40 KB for a store with 40 products
 
@@ -61,6 +62,42 @@ export async function POST(req: Request) {
       inputSchema: z.object({}),
       run: async () => JSON.stringify(dataset.categorias),
     }),
+    betaZodTool({
+      name: 'simular_escenario',
+      description:
+        'Simula un "¿Y si…?" para un producto y proyecta 30 días antes y después: unidades, ingresos, ganancia, días para agotarse y ventas perdidas por falta de stock. tipo "precio" usa cambio_precio_pct (-15 = 15% de descuento, 10 = subir 10%); "reposicion" usa unidades a reponer; "demanda" usa aumento_demanda_pct (por ejemplo +30 por el Buen Fin). Llama una vez por opción si quieres comparar.',
+      inputSchema: z.object({
+        producto: z.string().min(1).max(80).describe('Nombre o SKU del producto'),
+        tipo: z.enum(['precio', 'reposicion', 'demanda']),
+        cambio_precio_pct: z.number().min(-70).max(100).nullable().describe('Solo para tipo "precio"'),
+        unidades: z.number().int().min(1).max(10_000).nullable().describe('Solo para tipo "reposicion"'),
+        aumento_demanda_pct: z.number().min(-90).max(300).nullable().describe('Solo para tipo "demanda"'),
+      }),
+      run: async (input) => {
+        const producto = findProducts(dataset, input.producto)[0];
+        if (!producto) return `No hay productos que coincidan con "${input.producto}".`;
+        const escenario = toScenario(input);
+        if (escenario === null) return `Falta el parámetro para el tipo "${input.tipo}".`;
+        return JSON.stringify({ producto: producto.producto, sku: producto.sku, escenario, ...simulate(producto, escenario) });
+      },
+    }),
+    betaZodTool({
+      name: 'compras_juntas',
+      description:
+        'Pares de productos que se compran en los mismos pedidos más de lo esperado (lo que se compra junto), con pedidos en común, lift y confianza. Sin producto devuelve los pares principales; con producto, los pares donde aparece.',
+      inputSchema: z.object({ producto: z.string().max(80).nullable().describe('Nombre o SKU; null para los principales') }),
+      run: async ({ producto }) => {
+        const pares = pairsFor(dataset, producto);
+        return pares.length > 0 ? JSON.stringify(pares) : 'No hay pares con suficientes pedidos en común para ese producto.';
+      },
+    }),
+    betaZodTool({
+      name: 'fechas_clave',
+      description:
+        'Próximas fechas comerciales de México con los días que faltan, si el stock de los productos que encajan alcanza para la fecha (preparacion y cuántas piezas pedir) y qué stock lento conviene empujar en esa fecha.',
+      inputSchema: z.object({}),
+      run: async () => JSON.stringify(dataset.eventos),
+    }),
   ];
 
   const stream = streamAnswerWithTools({ model: MODELO_CHAT, system: SYSTEM_CHAT, mensajes, tools, signal: req.signal });
@@ -68,6 +105,17 @@ export async function POST(req: Request) {
     headers: { 'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-cache, no-transform' },
   });
 }
+
+const toScenario = (input: {
+  readonly tipo: 'precio' | 'reposicion' | 'demanda';
+  readonly cambio_precio_pct: number | null;
+  readonly unidades: number | null;
+  readonly aumento_demanda_pct: number | null;
+}): Escenario | null => {
+  if (input.tipo === 'precio') return input.cambio_precio_pct === null ? null : { tipo: 'precio', cambioPct: input.cambio_precio_pct };
+  if (input.tipo === 'reposicion') return input.unidades === null ? null : { tipo: 'reposicion', unidades: input.unidades };
+  return input.aumento_demanda_pct === null ? null : { tipo: 'demanda', aumentoPct: input.aumento_demanda_pct };
+};
 
 const safeJson = (texto: string): unknown => {
   try {

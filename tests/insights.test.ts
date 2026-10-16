@@ -4,13 +4,10 @@ import { findProducts, rankProducts, riskProducts, storeOverview } from '@/lib/d
 import { splitLines } from '@/lib/format/ndjson';
 import { nextReveal } from '@/lib/format/reveal';
 import { closeOpenBold, parseRichText } from '@/lib/format/richText';
-import { selectChatDataset, selectGroups, selectKpis } from '@/state/selectors';
-import { loadExample } from './fixture';
+import { loadExampleDataset } from './fixture';
 
 describe('chat dataset for the example store', () => {
-  const data = loadExample();
-  const grupos = selectGroups(data);
-  const ds = selectChatDataset(data, grupos, selectKpis(data, grupos));
+  const ds = loadExampleDataset();
 
   it('is valid for the API and small enough to send', () => {
     expect(ChatDatasetSchema.safeParse(ds).success).toBe(true);

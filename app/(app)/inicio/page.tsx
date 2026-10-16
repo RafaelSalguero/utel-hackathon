@@ -5,6 +5,10 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import { AiSummary } from '@/components/dashboard/AiSummary';
 import { AlertRow } from '@/components/dashboard/AlertRow';
+import { BasketPairs } from '@/components/dashboard/BasketPairs';
+import { DataChatProvider } from '@/components/dashboard/DataChatProvider';
+import { EventCountdown } from '@/components/dashboard/EventCountdown';
+import { WhatIfCards } from '@/components/dashboard/WhatIfCards';
 import { KpiCard } from '@/components/dashboard/KpiCard';
 import { SalesChart } from '@/components/dashboard/SalesChart';
 import { TopProducts } from '@/components/dashboard/TopProducts';
@@ -27,51 +31,59 @@ export default function DashboardPage() {
   const { fechaCorte } = state.data;
 
   return (
-    <main className={`${layout.page} ${layout.withNav}`}>
-      <header className={styles.header}>
-        <div className={styles.headerText}>
-          <p className={styles.source}>
-            Datos de {state.archivo.nombre}
-            {fechaCorte && ` · ${formatLongDate(fechaCorte)}`}
-          </p>
-          <h1 className={layout.title}>Hola 👋</h1>
-        </div>
-        <Link href="/" className={styles.uploadButton} aria-label="Subir otro archivo">
-          <Upload size={22} aria-hidden />
-        </Link>
-      </header>
+    <DataChatProvider>
+      <main className={`${layout.page} ${layout.withNav}`}>
+        <header className={styles.header}>
+          <div className={styles.headerText}>
+            <p className={styles.source}>
+              Datos de {state.archivo.nombre}
+              {fechaCorte && ` · ${formatLongDate(fechaCorte)}`}
+            </p>
+            <h1 className={layout.title}>Hola 👋</h1>
+          </div>
+          <Link href="/" className={styles.uploadButton} aria-label="Subir otro archivo">
+            <Upload size={22} aria-hidden />
+          </Link>
+        </header>
 
-      <div className={layout.pair}>
-        {kpis.hayVentas && (
-          <>
-            <KpiCard inverse label="Ventas últimos 7 días" value={formatMoney(kpis.ventas7d)} cambio={kpis.cambio7d} comparacion="vs. semana anterior" />
-            <KpiCard label="Ventas últimos 30 días" value={formatMoney(kpis.ventas30d)} cambio={kpis.cambio30d} comparacion="vs. mes anterior" />
-          </>
+        <EventCountdown fechaCorte={fechaCorte} />
+
+        <div className={layout.pair}>
+          {kpis.hayVentas && (
+            <>
+              <KpiCard inverse label="Ventas últimos 7 días" value={formatMoney(kpis.ventas7d)} cambio={kpis.cambio7d} comparacion="vs. semana anterior" />
+              <KpiCard label="Ventas últimos 30 días" value={formatMoney(kpis.ventas30d)} cambio={kpis.cambio30d} comparacion="vs. mes anterior" />
+            </>
+          )}
+          <KpiCard label="Unidades en stock" value={formatNumber(kpis.unidadesStock)} pie={plural(kpis.productos, 'producto', 'productos')} />
+          <KpiCard label="Valor del inventario" value={formatMoney(kpis.valorInventario)} pie="a precio de venta" />
+        </div>
+
+        {(alertas.porAgotarse > 0 || alertas.lentos > 0) && (
+          <div className={styles.alerts}>
+            {alertas.porAgotarse > 0 && (
+              <AlertRow status="por_agotarse" texto={`${plural(alertas.porAgotarse, 'producto', 'productos')} por agotarse`} />
+            )}
+            {alertas.lentos > 0 && (
+              <AlertRow status="lento" texto={`${plural(alertas.lentos, 'producto', 'productos')} sin ventas en 30 días`} />
+            )}
+          </div>
         )}
-        <KpiCard label="Unidades en stock" value={formatNumber(kpis.unidadesStock)} pie={plural(kpis.productos, 'producto', 'productos')} />
-        <KpiCard label="Valor del inventario" value={formatMoney(kpis.valorInventario)} pie="a precio de venta" />
-      </div>
 
-      {(alertas.porAgotarse > 0 || alertas.lentos > 0) && (
-        <div className={styles.alerts}>
-          {alertas.porAgotarse > 0 && (
-            <AlertRow status="por_agotarse" texto={`${plural(alertas.porAgotarse, 'producto', 'productos')} por agotarse`} />
-          )}
-          {alertas.lentos > 0 && (
-            <AlertRow status="lento" texto={`${plural(alertas.lentos, 'producto', 'productos')} sin ventas en 30 días`} />
-          )}
-        </div>
-      )}
+        {kpis.hayVentas ? (
+          <SalesChart serie={serie} />
+        ) : (
+          <p className={layout.notice}>Tu archivo no trae ventas: mostramos solo las métricas de inventario.</p>
+        )}
 
-      {kpis.hayVentas ? (
-        <SalesChart serie={serie} />
-      ) : (
-        <p className={layout.notice}>Tu archivo no trae ventas: mostramos solo las métricas de inventario.</p>
-      )}
+        <AiSummary />
 
-      <AiSummary />
+        {kpis.hayVentas && <WhatIfCards />}
 
-      {top.length > 0 && <TopProducts grupos={top} />}
-    </main>
+        {kpis.hayVentas && <BasketPairs />}
+
+        {top.length > 0 && <TopProducts grupos={top} />}
+      </main>
+    </DataChatProvider>
   );
 }

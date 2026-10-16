@@ -1,6 +1,9 @@
 import { countBy, maxBy, orderBy, sumBy } from 'lodash-es';
 import type { ChatDataset, SummaryInput } from '@/lib/ai/schemas';
+import { frequentPairs, type ProductPair } from '@/lib/domain/basket';
+import { planEvent, upcomingEvents, type EventPlan } from '@/lib/domain/calendar';
 import { buildChatDataset } from '@/lib/domain/insights';
+import { estimateElasticities } from '@/lib/domain/whatif';
 import { CATEGORIES } from '@/lib/domain/categories';
 import {
   dailySeries,
@@ -110,5 +113,18 @@ const toAiKpis = (kpis: Kpis): SummaryInput['kpis'] => ({
 export const selectSummaryInput = (data: StoreData, grupos: readonly ProductGroup[], kpis: Kpis): SummaryInput =>
   buildSummaryInput(data, grupos, toAiKpis(kpis));
 
-export const selectChatDataset = (data: StoreData, grupos: readonly ProductGroup[], kpis: Kpis): ChatDataset =>
-  buildChatDataset(data, grupos, toAiKpis(kpis));
+export const selectEventPlans = (grupos: readonly ProductGroup[], hoy: string): readonly EventPlan[] =>
+  upcomingEvents(hoy).map((e) => planEvent(e, grupos));
+
+export const selectPairs = (data: StoreData, grupos: readonly ProductGroup[]): readonly ProductPair[] => frequentPairs(data.ventas, grupos);
+
+export const selectChatDataset = (
+  data: StoreData,
+  grupos: readonly ProductGroup[],
+  kpis: Kpis,
+  extras: { readonly parejas: readonly ProductPair[]; readonly eventos: readonly EventPlan[] },
+): ChatDataset =>
+  buildChatDataset(data, grupos, toAiKpis(kpis), { ...extras, elasticidades: estimateElasticities(data.ventas, grupos) });
+
+// Today for the calendar: the file's cutoff date, so the example always gives the same countdown.
+export const selectToday = (data: StoreData, hoyReal: string): string => data.fechaCorte ?? hoyReal;

@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChatEventSchema, type ChatMessage } from '@/lib/ai/schemas';
 import { splitLines } from '@/lib/format/ndjson';
 import { REVEAL_TICK_MS, nextReveal } from '@/lib/format/reveal';
-import { selectChatDataset } from '@/state/selectors';
-import { useGroups, useKpis, useLoadedStore } from './useStore';
+import { useChatDataset, useLoadedStore } from './useStore';
 
 const MAX_HISTORIAL = 20; // the API accepts up to 20 messages per request
 
@@ -50,9 +49,7 @@ const readAnswer = async (
 // The answer in progress is local and only enters the history once fully shown.
 export const useDataChat = () => {
   const { state, dispatch } = useLoadedStore();
-  const grupos = useGroups();
-  const kpis = useKpis();
-  const dataset = useMemo(() => selectChatDataset(state.data, grupos, kpis), [state.data, grupos, kpis]);
+  const dataset = useChatDataset();
   const [enCurso, setEnCurso] = useState<EnCurso | null>(null);
   const [error, setError] = useState<string | null>(null);
   const abortar = useRef<AbortController | null>(null);

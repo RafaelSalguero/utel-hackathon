@@ -67,6 +67,10 @@ export const ChatProductSchema = z.object({
   estado,
   diasParaAgotarse: z.number().nullable(),
   diasSinVenta: z.number().nullable(),
+  ventaDiaria: z.number(), // units per day, last 28 days
+  ventaDiaria8Semanas: z.number(), // units per day over 8 weeks (pace of slow products before they stopped)
+  elasticidad: z.number(), // a d% price change moves sales by about -elasticidad*d%
+  elasticidadFuente: z.enum(['producto', 'tienda', 'supuesto']),
   variantes: z
     .array(z.object({ variante: z.string().max(40), stock: z.number(), unidades30d: z.number(), estado, diasParaAgotarse: z.number().nullable() }))
     .max(50),
@@ -74,9 +78,47 @@ export const ChatProductSchema = z.object({
 
 export type ChatProduct = z.infer<typeof ChatProductSchema>;
 
+const ladoPareja = z.object({ sku: z.string().max(120), producto: nombre, estado });
+
+export const ChatPairSchema = z.object({
+  a: ladoPareja,
+  b: ladoPareja,
+  pedidos: z.number(),
+  lift: z.number(),
+  confianzaAB: z.number(),
+  confianzaBA: z.number(),
+  oportunidad: z.enum(['liquidar_en_kit', 'riesgo_doble', 'kit']),
+});
+
+export const RetailEventPlanSchema = z.object({
+  id: z.string().max(40),
+  nombre: z.string().max(40),
+  fecha: z.string(),
+  diasRestantes: z.number(),
+  duracion: z.number(),
+  aproximada: z.boolean(),
+  clave: z
+    .array(
+      z.object({
+        sku: z.string().max(120),
+        producto: nombre,
+        stock: z.number(),
+        ventaDiaria: z.number(),
+        diasParaAgotarse: z.number().nullable(),
+        preparacion: z.enum(['se_agota_antes', 'se_agota_durante', 'listo']),
+        pedirMas: z.number(),
+      }),
+    )
+    .max(5),
+  oportunidades: z.array(z.object({ sku: z.string().max(120), producto: nombre, stock: z.number() })).max(5),
+});
+
 export const ChatDatasetSchema = z.object({
   fechaCorte: z.string().nullable(),
   kpis: SummaryInputSchema.shape.kpis,
+  elasticidadTienda: z.number(),
+  compras: z.array(ChatPairSchema).max(40),
+  eventos: z.array(RetailEventPlanSchema).max(5),
   productos: z.array(ChatProductSchema).max(500),
   categorias: z
     .array(
@@ -121,6 +163,55 @@ export const ChatEventSchema = z.discriminatedUnion('t', [
 ]);
 
 export type ChatEvent = z.infer<typeof ChatEventSchema>;
+
+// ---- "¿Y si…?" ---------------------------------------------------------------
+
+const resultado30d = z.object({
+  precio: z.number(),
+  ritmoDiario: z.number(),
+  unidades: z.number(),
+  ingresos: z.number(),
+  ganancia: z.number().nullable(),
+  diasParaAgotarse: z.number().nullable(),
+  ventasPerdidas: z.number(),
+});
+
+export const WhatIfCandidateSchema = z.object({
+  id: z.string().max(40),
+  pregunta: z.string().max(160),
+  sku: z.string().max(120),
+  producto: nombre,
+  escenario: z.discriminatedUnion('tipo', [
+    z.object({ tipo: z.literal('precio'), cambioPct: z.number() }),
+    z.object({ tipo: z.literal('reposicion'), unidades: z.number() }),
+    z.object({ tipo: z.literal('demanda'), aumentoPct: z.number() }),
+  ]),
+  proyeccion: z.object({ antes: resultado30d, despues: resultado30d, supuestos: z.array(z.string().max(300)).max(5) }),
+});
+
+export const WhatIfRequestSchema = z.object({
+  fechaCorte: z.string().nullable(),
+  candidatos: z.array(WhatIfCandidateSchema).min(1).max(10),
+});
+
+export type WhatIfRequest = z.infer<typeof WhatIfRequestSchema>;
+
+// The AI picks and explains; every number on the card comes from the candidate.
+export const WhatIfAiSchema = z.object({
+  escenarios: z
+    .array(
+      z.object({
+        id: z.string(),
+        titulo: z.string().max(80), // the question, e.g. "¿Y si subo 10% la Chamarra acolchada?"
+        explicacion: z.string().max(240),
+        veredicto: z.enum(['conviene', 'no_conviene', 'depende']),
+      }),
+    )
+    .min(1)
+    .max(5),
+});
+
+export type WhatIfAi = z.infer<typeof WhatIfAiSchema>;
 
 // ---- Promotion -------------------------------------------------------------
 

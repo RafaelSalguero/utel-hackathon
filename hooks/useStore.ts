@@ -3,7 +3,7 @@
 import { useContext, useMemo } from 'react';
 import { StoreContext, type StoreValue } from '@/state/StoreContext';
 import type { State } from '@/state/reducer';
-import { selectGroups, selectKpis } from '@/state/selectors';
+import { selectChatDataset, selectEventPlans, selectGroups, selectKpis, selectPairs, selectToday } from '@/state/selectors';
 
 export const useStore = (): StoreValue => {
   const store = useContext(StoreContext);
@@ -30,4 +30,32 @@ export const useKpis = () => {
   const { state } = useLoadedStore();
   const grupos = useGroups();
   return useMemo(() => selectKpis(state.data, grupos), [state.data, grupos]);
+};
+
+export const useEventPlans = () => {
+  const { state } = useLoadedStore();
+  const grupos = useGroups();
+  return useMemo(
+    () => selectEventPlans(grupos, selectToday(state.data, new Date().toISOString().slice(0, 10))),
+    [state.data, grupos],
+  );
+};
+
+export const usePairs = () => {
+  const { state } = useLoadedStore();
+  const grupos = useGroups();
+  return useMemo(() => selectPairs(state.data, grupos), [state.data, grupos]);
+};
+
+// Everything the AI features send to the server: per-product aggregates, pairs and dates.
+export const useChatDataset = () => {
+  const { state } = useLoadedStore();
+  const grupos = useGroups();
+  const kpis = useKpis();
+  const eventos = useEventPlans();
+  const parejas = usePairs();
+  return useMemo(
+    () => selectChatDataset(state.data, grupos, kpis, { parejas, eventos }),
+    [state.data, grupos, kpis, parejas, eventos],
+  );
 };
