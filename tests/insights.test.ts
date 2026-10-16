@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { ChatDatasetSchema } from '@/lib/ai/schemas';
 import { findProducts, rankProducts, riskProducts, storeOverview } from '@/lib/domain/insights';
-import { parseRichText } from '@/lib/format/richText';
+import { splitLines } from '@/lib/format/ndjson';
+import { nextReveal } from '@/lib/format/reveal';
+import { closeOpenBold, parseRichText } from '@/lib/format/richText';
 import { selectChatDataset, selectGroups, selectKpis } from '@/state/selectors';
 import { loadExample } from './fixture';
 
@@ -51,6 +53,32 @@ describe('chat dataset for the example store', () => {
     const ropa = ds.categorias.find((c) => c.categoria === 'Ropa');
     expect(ropa?.productos).toBe(8);
     expect(ropa?.porAgotarse).toBe(3);
+  });
+});
+
+describe('streaming helpers', () => {
+  it('splits NDJSON and keeps the unfinished line', () => {
+    expect(splitLines('{"t":"texto"}\n{"t":"fi')).toEqual({ lineas: ['{"t":"texto"}'], resto: '{"t":"fi' });
+    expect(splitLines('a\n\nb\n')).toEqual({ lineas: ['a', 'b'], resto: '' });
+  });
+
+  it('reveals a burst word by word and finishes', () => {
+    const texto = 'Tu producto más vendido es la Sudadera oversize con 144 unidades. '.repeat(15);
+    const pasos = [];
+    let mostrado = 0;
+    while (mostrado < texto.length) {
+      mostrado = nextReveal(texto, mostrado);
+      pasos.push(mostrado);
+    }
+    expect(pasos.length).toBeGreaterThan(20); // not all at once
+    expect(pasos.length).toBeLessThan(120); // ~3.6 s at most at 30 ms per tick
+    expect(pasos.slice(0, -1).every((n) => texto[n] === ' ')).toBe(true); // stops between words
+    expect(nextReveal('hola', 4)).toBe(4);
+  });
+
+  it('closes bold that is still being written', () => {
+    expect(closeOpenBold('Tu top es **Sud')).toBe('Tu top es **Sud**');
+    expect(closeOpenBold('**Sudadera** listo')).toBe('**Sudadera** listo');
   });
 });
 

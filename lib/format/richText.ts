@@ -14,6 +14,9 @@ export const parseInline = (linea: string): readonly Segment[] =>
         : { texto: parte, negrita: false },
     );
 
+// While streaming, "**Lab" has no closing marker yet: close it so it renders bold, not as asterisks.
+export const closeOpenBold = (texto: string): string => ((texto.match(/\*\*/g)?.length ?? 0) % 2 === 1 ? `${texto}**` : texto);
+
 export const parseRichText = (texto: string): readonly Block[] =>
   texto
     .split('\n')

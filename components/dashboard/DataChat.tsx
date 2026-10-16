@@ -4,7 +4,7 @@ import { ArrowUp, RotateCw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useDataChat } from '@/hooks/useDataChat';
-import { parseRichText } from '@/lib/format/richText';
+import { closeOpenBold, parseRichText } from '@/lib/format/richText';
 import styles from './DataChat.module.css';
 
 const SUGERENCIAS = [
@@ -15,6 +15,26 @@ const SUGERENCIAS = [
 ] as const;
 
 const PLACEHOLDER = 'Pregunta sobre tus datos, ej. ¿qué producto me deja más ganancia?';
+
+// What the agent is doing while it calls each tool.
+const HERRAMIENTAS: Readonly<Record<string, string>> = {
+  resumen_tienda: 'Revisando el resumen de tu tienda',
+  ranking_productos: 'Comparando productos',
+  detalle_producto: 'Buscando el producto',
+  productos_en_riesgo: 'Revisando productos en riesgo',
+  estadisticas_categorias: 'Analizando categorías',
+};
+
+function Thinking({ herramienta }: { readonly herramienta: string | null }) {
+  return (
+    <span className={styles.thinking}>
+      <span className={styles.dot} />
+      <span className={styles.dot} />
+      <span className={styles.dot} />
+      <span className={styles.status}>{herramienta ? `${HERRAMIENTAS[herramienta] ?? 'Consultando tus datos'}…` : 'Pensando…'}</span>
+    </span>
+  );
+}
 
 function RichText({ texto }: { readonly texto: string }) {
   const bloques = parseRichText(texto);
@@ -35,13 +55,16 @@ function RichText({ texto }: { readonly texto: string }) {
 }
 
 export function DataChat() {
-  const { mensajes, preguntar, reintentar, pensando, error } = useDataChat();
+  const { mensajes, enCurso, preguntar, reintentar, pensando, error } = useDataChat();
   const [borrador, setBorrador] = useState('');
-  const final = useRef<HTMLDivElement>(null);
+  const lista = useRef<HTMLDivElement>(null);
+  const largo = enCurso?.texto.length ?? 0;
 
+  // Follow the answer as it grows, inside the conversation box only (not the whole page).
   useEffect(() => {
-    if (mensajes.length > 0 || pensando) final.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, [mensajes.length, pensando]);
+    const el = lista.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [mensajes.length, largo, pensando]);
 
   const enviar = (texto: string) => {
     if (texto.trim() === '' || pensando) return;
@@ -66,18 +89,18 @@ export function DataChat() {
       )}
 
       {mensajes.length > 0 && (
-        <div className={styles.messages} role="log" aria-live="polite" aria-label="Conversación">
+        <div ref={lista} className={styles.messages} role="log" aria-label="Conversación">
           {mensajes.map((m, i) => (
             <div key={i} className={m.rol === 'usuario' ? styles.user : styles.assistant}>
               <span className={styles.srOnly}>{m.rol === 'usuario' ? 'Tú:' : 'StockIA:'}</span>
               {m.rol === 'usuario' ? <p>{m.texto}</p> : <RichText texto={m.texto} />}
             </div>
           ))}
-          {pensando && (
-            <div className={`${styles.assistant} ${styles.thinking}`} aria-label="Consultando tus datos">
-              <span className={styles.dot} />
-              <span className={styles.dot} />
-              <span className={styles.dot} />
+          {enCurso && (
+            // Not announced word by word; the finished answer is announced once by the log above.
+            <div className={styles.assistant} aria-busy="true">
+              {enCurso.texto !== '' && <RichText texto={closeOpenBold(enCurso.texto)} />}
+              {(enCurso.texto === '' || enCurso.herramienta) && <Thinking herramienta={enCurso.herramienta} />}
             </div>
           )}
           {error && !pensando && (
@@ -88,7 +111,6 @@ export function DataChat() {
               </Button>
             </div>
           )}
-          <div ref={final} />
         </div>
       )}
 

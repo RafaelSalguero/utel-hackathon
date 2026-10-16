@@ -96,9 +96,16 @@
 }
 
 .thinking {
-  flex-direction: row;
+  display: flex;
+  align-items: center;
   gap: 4px;
-  padding: 14px 16px;
+  min-height: 22px;
+}
+
+.status {
+  margin-left: 6px;
+  font-size: 0.82rem;
+  color: var(--text-subtle);
 }
 
 .dot {

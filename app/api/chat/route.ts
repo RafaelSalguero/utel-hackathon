@@ -1,6 +1,6 @@
 import { betaZodTool } from '@anthropic-ai/sdk/helpers/beta/zod';
 import { z } from 'zod';
-import { answerWithTools } from '@/lib/ai/chat';
+import { streamAnswerWithTools } from '@/lib/ai/chat';
 import { MODELO_CHAT, SYSTEM_CHAT } from '@/lib/ai/prompts';
 import { ChatRequestSchema } from '@/lib/ai/schemas';
 import { CRITERIOS, findProducts, rankProducts, riskProducts, storeOverview } from '@/lib/domain/insights';
@@ -63,8 +63,10 @@ export async function POST(req: Request) {
     }),
   ];
 
-  const r = await answerWithTools({ model: MODELO_CHAT, system: SYSTEM_CHAT, mensajes, tools });
-  return r.ok ? Response.json({ respuesta: r.value }) : Response.json({ error: r.error }, { status: 502 });
+  const stream = streamAnswerWithTools({ model: MODELO_CHAT, system: SYSTEM_CHAT, mensajes, tools, signal: req.signal });
+  return new Response(stream, {
+    headers: { 'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-cache, no-transform' },
+  });
 }
 
 const safeJson = (texto: string): unknown => {

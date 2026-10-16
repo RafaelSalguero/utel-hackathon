@@ -112,6 +112,16 @@ export const ChatRequestSchema = z.object({
 
 export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 
+// /api/chat streams one JSON event per line (NDJSON).
+export const ChatEventSchema = z.discriminatedUnion('t', [
+  z.object({ t: z.literal('texto'), texto: z.string() }),
+  z.object({ t: z.literal('herramienta'), nombre: z.string() }),
+  z.object({ t: z.literal('error'), error: z.string() }),
+  z.object({ t: z.literal('fin') }),
+]);
+
+export type ChatEvent = z.infer<typeof ChatEventSchema>;
+
 // ---- Promotion -------------------------------------------------------------
 
 export const PROMO_TIPOS = ['descuento', '2x1', 'novedad', 'ultimas_piezas'] as const;
