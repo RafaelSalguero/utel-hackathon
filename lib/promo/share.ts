@@ -34,11 +34,13 @@ export const copyText = async (texto: string): Promise<boolean> => {
   }
 };
 
-export const fileSlug = (texto: string): string =>
+export const slugify = (texto: string): string =>
   texto
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/(^-|-$)/g, '')
-    .slice(0, 40) || 'promo';
+    .slice(0, 40);
+
+export const fileSlug = (texto: string): string => slugify(texto) || 'promo';

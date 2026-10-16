@@ -1,5 +1,6 @@
 import { countBy, maxBy, orderBy, sumBy } from 'lodash-es';
-import type { SummaryInput } from '@/lib/ai/schemas';
+import type { ChatDataset, SummaryInput } from '@/lib/ai/schemas';
+import { buildChatDataset } from '@/lib/domain/insights';
 import { CATEGORIES } from '@/lib/domain/categories';
 import {
   dailySeries,
@@ -96,13 +97,18 @@ export const selectSuggestedPromo = (grupos: readonly ProductGroup[]): ProductGr
   return maxBy(candidatos, 'tendencia') ?? selectTopProducts(grupos, 1)[0] ?? grupos[0] ?? null;
 };
 
+const toAiKpis = (kpis: Kpis): SummaryInput['kpis'] => ({
+  ventas7d: Math.round(kpis.ventas7d),
+  cambio7d: kpis.cambio7d === null ? null : Number(kpis.cambio7d.toFixed(2)),
+  ventas30d: Math.round(kpis.ventas30d),
+  cambio30d: kpis.cambio30d === null ? null : Number(kpis.cambio30d.toFixed(2)),
+  unidadesStock: kpis.unidadesStock,
+  valorInventario: Math.round(kpis.valorInventario),
+  productos: kpis.productos,
+});
+
 export const selectSummaryInput = (data: StoreData, grupos: readonly ProductGroup[], kpis: Kpis): SummaryInput =>
-  buildSummaryInput(data, grupos, {
-    ventas7d: Math.round(kpis.ventas7d),
-    cambio7d: kpis.cambio7d === null ? null : Number(kpis.cambio7d.toFixed(2)),
-    ventas30d: Math.round(kpis.ventas30d),
-    cambio30d: kpis.cambio30d === null ? null : Number(kpis.cambio30d.toFixed(2)),
-    unidadesStock: kpis.unidadesStock,
-    valorInventario: Math.round(kpis.valorInventario),
-    productos: kpis.productos,
-  });
+  buildSummaryInput(data, grupos, toAiKpis(kpis));
+
+export const selectChatDataset = (data: StoreData, grupos: readonly ProductGroup[], kpis: Kpis): ChatDataset =>
+  buildChatDataset(data, grupos, toAiKpis(kpis));

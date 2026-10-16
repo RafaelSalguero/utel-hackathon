@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { PALETAS_PREDEFINIDAS, contrastRatio, isReadable, paletteOptions } from '@/lib/promo/palette';
 import { discountedPrice, priceLine } from '@/lib/promo/pricing';
-import { normalizeUrl } from '@/lib/promo/qr';
+import { productUrl } from '@/lib/promo/qr';
 
 describe('pricing', () => {
   it('computes the discounted price in code', () => {
@@ -27,10 +27,9 @@ describe('palette contrast', () => {
   });
 });
 
-describe('normalizeUrl', () => {
-  it('adds https and rejects junk', () => {
-    expect(normalizeUrl('casalupita.mitiendanube.com')).toBe('https://casalupita.mitiendanube.com/');
-    expect(normalizeUrl('')).toBeNull();
-    expect(normalizeUrl('hola')).toBeNull();
+describe('productUrl', () => {
+  it('builds a mock product page from the store and product names', () => {
+    expect(productUrl('Casa Lupita', 'Chamarra acolchada')).toBe('https://casa-lupita.mitiendanube.com/productos/chamarra-acolchada');
+    expect(productUrl('', 'Café de olla molido 250 g')).toBe('https://mitienda.mitiendanube.com/productos/cafe-de-olla-molido-250-g');
   });
 });

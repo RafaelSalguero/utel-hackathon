@@ -1,4 +1,4 @@
-import type { AiSummary, PromoFormato, PromoTipo } from '@/lib/ai/schemas';
+import type { AiSummary, ChatMessage, PromoFormato, PromoTipo } from '@/lib/ai/schemas';
 import type { StoreData } from '@/lib/domain/types';
 
 export type Archivo = { readonly nombre: string; readonly tamano: number };
@@ -11,7 +11,6 @@ export type PromoRequest = {
   readonly formato: PromoFormato;
   readonly foto: string | null; // object URL; the photo never leaves the browser
   readonly tienda: string;
-  readonly url: string;
 };
 
 export type State =
@@ -22,12 +21,14 @@ export type State =
       readonly data: StoreData;
       readonly resumen: AiSummary | null;
       readonly promo: PromoRequest | null;
+      readonly chat: readonly ChatMessage[];
     };
 
 export type Action =
   | { readonly type: 'cargar'; readonly data: StoreData; readonly archivo: Archivo }
   | { readonly type: 'resumen'; readonly resumen: AiSummary }
   | { readonly type: 'promo'; readonly promo: PromoRequest }
+  | { readonly type: 'chat'; readonly mensaje: ChatMessage }
   | { readonly type: 'reiniciar' };
 
 export const initialState: State = { status: 'vacio' };
@@ -35,11 +36,13 @@ export const initialState: State = { status: 'vacio' };
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case 'cargar':
-      return { status: 'listo', archivo: action.archivo, data: action.data, resumen: null, promo: null };
+      return { status: 'listo', archivo: action.archivo, data: action.data, resumen: null, promo: null, chat: [] };
     case 'resumen':
       return state.status === 'listo' ? { ...state, resumen: action.resumen } : state;
     case 'promo':
       return state.status === 'listo' ? { ...state, promo: action.promo } : state;
+    case 'chat':
+      return state.status === 'listo' ? { ...state, chat: [...state.chat, action.mensaje] } : state;
     case 'reiniciar':
       return { status: 'vacio' };
   }

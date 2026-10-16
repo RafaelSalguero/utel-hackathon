@@ -16,7 +16,7 @@ import { useGroups, useLoadedStore } from '@/hooks/useStore';
 import type { PromoInput } from '@/lib/ai/schemas';
 import { paletteOptions } from '@/lib/promo/palette';
 import { priceLine } from '@/lib/promo/pricing';
-import { normalizeUrl, toQrDataUrl } from '@/lib/promo/qr';
+import { productUrl, toQrDataUrl } from '@/lib/promo/qr';
 import { downloadBlob, fileSlug, sharePng } from '@/lib/promo/share';
 import { nodeToPng } from '@/lib/promo/toPng';
 import { selectProduct } from '@/state/selectors';
@@ -55,10 +55,9 @@ export default function PromoResultPage() {
   }, [solicitud, grupo, router]);
 
   useEffect(() => {
-    const url = solicitud ? normalizeUrl(solicitud.url) : null;
-    if (url === null) return;
-    void toQrDataUrl(url).then((r) => (r.ok ? setQr(r.value) : toast.error(r.error)));
-  }, [solicitud]);
+    if (solicitud === null || grupo === null) return;
+    void toQrDataUrl(productUrl(solicitud.tienda, grupo.producto)).then((r) => (r.ok ? setQr(r.value) : toast.error(r.error)));
+  }, [solicitud, grupo]);
 
   if (solicitud === null || grupo === null || input === null) return null;
 

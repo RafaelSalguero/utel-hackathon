@@ -1,18 +1,11 @@
 import QRCode from 'qrcode';
 import { err, ok, type Result } from '@/lib/fp/result';
+import { slugify } from './share';
 
-// Accepts "mitienda.com" as well as full URLs.
-export const normalizeUrl = (texto: string): string | null => {
-  const limpio = texto.trim();
-  if (limpio === '') return null;
-  const conEsquema = /^https?:\/\//i.test(limpio) ? limpio : `https://${limpio}`;
-  try {
-    const url = new URL(conEsquema);
-    return url.hostname.includes('.') ? url.toString() : null;
-  } catch {
-    return null;
-  }
-};
+// Mock product page: the CSV has no product URLs yet, so the QR points to a
+// Tiendanube-style address built from the store and product names.
+export const productUrl = (tienda: string, producto: string): string =>
+  `https://${slugify(tienda) || 'mitienda'}.mitiendanube.com/productos/${slugify(producto) || 'producto'}`;
 
 export const toQrDataUrl = async (url: string): Promise<Result<string>> => {
   try {

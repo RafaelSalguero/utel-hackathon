@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAiSummary } from '@/hooks/useAiSummary';
+import { DataChat } from './DataChat';
 import styles from './AiSummary.module.css';
 
 export function AiSummary() {
@@ -57,6 +58,8 @@ export function AiSummary() {
           <p className={styles.disclaimer}>Generado con IA a partir de tus datos. Revísalo antes de decidir.</p>
         </>
       )}
+
+      {hayVentas && <DataChat />}
     </section>
   );
 }

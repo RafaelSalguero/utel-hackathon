@@ -17,5 +17,6 @@ Without an API key everything works except the AI blocks, which show an error wi
 
 - `lib/` pure functions: `csv/` (parse → validate → normalize), `domain/` (classifier, metrics, statuses, AI summary input), `ai/` (Claude client, prompts, zod schemas), `promo/` (price, palette contrast, QR, PNG, share)
 - `state/` reducer, context and selectors; `hooks/` effects (upload, AI calls)
-- `app/` screens; `app/api/resumen` and `app/api/promo` are the only server code
+- `app/` screens; `app/api/resumen`, `app/api/promo` and `app/api/chat` are the only server code
+- Chat with the data (in the "Resumen IA" card): `app/api/chat` runs Claude with the SDK tool runner; its tools query per-product aggregates built by `lib/domain/insights.ts` (the CSV never leaves the browser)
 - `app/theme.css` is the shadcn theme: replace it to re-skin the app. StockIA's own tokens (statuses, etc.) live in `app/globals.css`

@@ -12,7 +12,6 @@ import type { PromoFormato, PromoTipo } from '@/lib/ai/schemas';
 import type { ProductGroup } from '@/lib/domain/types';
 import { formatMoney, formatNumber, formatPercent } from '@/lib/format/money';
 import { DESCUENTOS } from '@/lib/promo/pricing';
-import { normalizeUrl } from '@/lib/promo/qr';
 import { selectBySearch, selectProduct, selectSuggestedPromo } from '@/state/selectors';
 import styles from './PromoForm.module.css';
 
@@ -50,11 +49,9 @@ export function PromoForm({ skuInicial }: { readonly skuInicial: string | null }
   const [formato, setFormato] = useState<PromoFormato>(previo?.formato ?? '1:1');
   const [foto, setFoto] = useState<string | null>(previo?.foto ?? null);
   const [tienda, setTienda] = useState(previo?.tienda ?? (state.archivo.nombre === 'ejemplo-tienda.csv' ? 'Casa Lupita' : ''));
-  const [url, setUrl] = useState(previo?.url ?? '');
   const fotoInput = useRef<HTMLInputElement>(null);
 
   const resultados = useMemo(() => selectBySearch(grupos, busqueda).slice(0, 30), [grupos, busqueda]);
-  const urlInvalida = url.trim() !== '' && normalizeUrl(url) === null;
 
   // The photo stays in the browser as an object URL; release it when replaced.
   const cambiarFoto = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,10 +68,10 @@ export function PromoForm({ skuInicial }: { readonly skuInicial: string | null }
   };
 
   const generar = () => {
-    if (!grupo || urlInvalida) return;
+    if (!grupo) return;
     dispatch({
       type: 'promo',
-      promo: { sku: grupo.id, tipo, descuento: tipo === 'descuento' ? descuento : null, formato, foto, tienda: tienda.trim(), url: url.trim() },
+      promo: { sku: grupo.id, tipo, descuento: tipo === 'descuento' ? descuento : null, formato, foto, tienda: tienda.trim() },
     });
     router.push('/promos/resultado');
   };
@@ -219,22 +216,11 @@ export function PromoForm({ skuInicial }: { readonly skuInicial: string | null }
           <span>Nombre</span>
           <Input value={tienda} onChange={(e) => setTienda(e.target.value)} maxLength={30} placeholder="Casa Lupita" className={styles.input} />
         </label>
-        <label className={styles.field}>
-          <span>URL de tu tienda (para el código QR)</span>
-          <Input
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            inputMode="url"
-            placeholder="mitienda.mitiendanube.com"
-            aria-invalid={urlInvalida}
-            className={styles.input}
-          />
-        </label>
-        {urlInvalida && <p className={styles.fieldError}>Escribe una dirección válida, por ejemplo mitienda.com</p>}
+        <p className={styles.hint}>La imagen incluye un código QR que lleva a la página del producto en tu tienda.</p>
       </fieldset>
 
       <div className={layout.stickyActions}>
-        <Button type="submit" className={layout.bigButton} disabled={urlInvalida}>
+        <Button type="submit" className={layout.bigButton}>
           <Sparkles aria-hidden /> Generar con IA
         </Button>
       </div>

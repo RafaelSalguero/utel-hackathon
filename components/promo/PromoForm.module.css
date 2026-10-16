@@ -244,8 +244,3 @@
   font-size: 1rem;
   font-weight: 400;
 }
-
-.fieldError {
-  font-size: 0.85rem;
-  color: var(--status-critico-fg);
-}

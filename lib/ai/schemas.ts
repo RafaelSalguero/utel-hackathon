@@ -45,6 +45,73 @@ export const SummaryInputSchema = z.object({
 
 export type SummaryInput = z.infer<typeof SummaryInputSchema>;
 
+// ---- Chat with the data ----------------------------------------------------
+
+const estado = z.enum(['por_agotarse', 'lento', 'sano']);
+
+export const ChatProductSchema = z.object({
+  sku: z.string().max(120),
+  producto: nombre,
+  categoria: z.string().max(40),
+  precio: z.number(),
+  costo: z.number().nullable(),
+  margen: z.number().nullable(), // (precio - costo) / precio
+  roi: z.number().nullable(), // (precio - costo) / costo
+  stock: z.number(),
+  valorInventario: z.number(),
+  unidades7d: z.number(),
+  unidades30d: z.number(),
+  ingresos30d: z.number(),
+  ganancia30d: z.number().nullable(),
+  tendencia3Semanas: z.number().nullable(),
+  estado,
+  diasParaAgotarse: z.number().nullable(),
+  diasSinVenta: z.number().nullable(),
+  variantes: z
+    .array(z.object({ variante: z.string().max(40), stock: z.number(), unidades30d: z.number(), estado, diasParaAgotarse: z.number().nullable() }))
+    .max(50),
+});
+
+export type ChatProduct = z.infer<typeof ChatProductSchema>;
+
+export const ChatDatasetSchema = z.object({
+  fechaCorte: z.string().nullable(),
+  kpis: SummaryInputSchema.shape.kpis,
+  productos: z.array(ChatProductSchema).max(500),
+  categorias: z
+    .array(
+      z.object({
+        categoria: z.string().max(40),
+        productos: z.number(),
+        ventas7d: z.number(),
+        cambio7d: z.number().nullable(),
+        ventas30d: z.number(),
+        cambio30d: z.number().nullable(),
+        ganancia30d: z.number().nullable(),
+        valorInventario: z.number(),
+        porAgotarse: z.number(),
+        lentos: z.number(),
+      }),
+    )
+    .max(20),
+});
+
+export type ChatDataset = z.infer<typeof ChatDatasetSchema>;
+
+export const ChatMessageSchema = z.object({
+  rol: z.enum(['usuario', 'asistente']),
+  texto: z.string().min(1).max(4000),
+});
+
+export type ChatMessage = z.infer<typeof ChatMessageSchema>;
+
+export const ChatRequestSchema = z.object({
+  dataset: ChatDatasetSchema,
+  mensajes: z.array(ChatMessageSchema).min(1).max(20),
+});
+
+export type ChatRequest = z.infer<typeof ChatRequestSchema>;
+
 // ---- Promotion -------------------------------------------------------------
 
 export const PROMO_TIPOS = ['descuento', '2x1', 'novedad', 'ultimas_piezas'] as const;
