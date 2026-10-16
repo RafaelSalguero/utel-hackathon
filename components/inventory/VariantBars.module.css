@@ -1,0 +1,50 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: minmax(64px, 30%) 1fr 32px;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.92rem;
+}
+
+.label {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--surface-tint);
+  overflow: hidden;
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.fill[data-status='por_agotarse'] {
+  background: var(--status-critico-fg);
+}
+
+.fill[data-status='lento'] {
+  background: var(--status-lento-fg);
+}
+
+.value {
+  text-align: right;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}

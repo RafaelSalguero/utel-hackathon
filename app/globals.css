@@ -1,0 +1,100 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+/* shadcn theme: replace app/theme.css to re-skin the whole app */
+@import "./theme.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-jakarta);
+  --font-heading: var(--font-jakarta);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* StockIA tokens that shadcn does not provide. Kept here so pasting a new
+   theme.css does not erase them. Derived from theme colors where possible. */
+:root {
+  --status-critico-bg: oklch(0.95 0.035 40);
+  --status-critico-fg: oklch(0.48 0.16 35);
+  --status-lento-bg: oklch(0.96 0.06 92);
+  --status-lento-fg: oklch(0.47 0.1 75);
+  --status-sano-bg: oklch(0.95 0.04 155);
+  --status-sano-fg: oklch(0.45 0.11 155);
+
+  --text-subtle: color-mix(in oklch, var(--foreground) 62%, var(--card));
+  /* --primary for small text: darkened toward foreground to keep 4.5:1 on cards */
+  --primary-strong: color-mix(in oklch, var(--primary) 68%, var(--foreground));
+  --surface-tint: color-mix(in oklch, var(--background) 70%, var(--border));
+  --inverse-bg: var(--foreground);
+  --inverse-fg: var(--background);
+  --positive-fg: var(--status-sano-fg);
+  --positive-on-inverse: var(--chart-2);
+  --negative-fg: var(--destructive);
+
+  --radius-card: calc(var(--radius) * 2);
+  --radius-control: calc(var(--radius) * 1.5);
+  --page-max: 480px;
+  --nav-height: 68px;
+}
+
+.dark {
+  --status-critico-bg: oklch(0.32 0.07 35);
+  --status-critico-fg: oklch(0.86 0.09 40);
+  --status-lento-bg: oklch(0.33 0.06 80);
+  --status-lento-fg: oklch(0.88 0.1 90);
+  --status-sano-bg: oklch(0.32 0.05 155);
+  --status-sano-fg: oklch(0.86 0.09 155);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+body {
+  background: var(--background);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* This theme's --muted-foreground is black, which makes shadcn placeholders look like values. */
+input::placeholder {
+  color: var(--text-subtle);
+  opacity: 1;
+}

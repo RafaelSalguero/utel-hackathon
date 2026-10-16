@@ -1,0 +1,44 @@
+.block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 16px;
+  border-radius: var(--radius-card);
+}
+
+.block[data-status='por_agotarse'] {
+  background: var(--status-critico-bg);
+  color: var(--status-critico-fg);
+}
+
+.block[data-status='lento'] {
+  background: var(--status-lento-bg);
+  color: var(--status-lento-fg);
+}
+
+.block[data-status='sano'] {
+  background: var(--status-sano-bg);
+  color: var(--status-sano-fg);
+}
+
+.big {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.detail {
+  font-size: 0.9rem;
+}
+
+.units {
+  text-align: right;
+  flex: none;
+}
+
+.unitsValue {
+  font-size: 1.5rem;
+  font-weight: 800;
+}

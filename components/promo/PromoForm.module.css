@@ -1,0 +1,251 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.section > legend {
+  margin-bottom: 10px;
+  padding: 0;
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--text-subtle);
+}
+
+.productCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+}
+
+.productInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.productName {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.productMeta {
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+.change {
+  min-height: 44px;
+  padding-inline: 8px;
+  font-weight: 700;
+  color: var(--primary-strong);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  border-radius: var(--radius-control);
+}
+
+.change:focus-visible {
+  outline: 2px solid var(--ring);
+}
+
+.picker {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  background: var(--card);
+  padding: 12px;
+}
+
+.search {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-subtle);
+  pointer-events: none;
+}
+
+.searchInput {
+  height: 44px;
+  padding-left: 42px;
+  border-radius: var(--radius-control);
+}
+
+.pickerList {
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.pickerItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  min-height: 56px;
+  border: 0;
+  background: none;
+  border-radius: var(--radius-control);
+  cursor: pointer;
+  color: inherit;
+}
+
+.pickerItem:hover,
+.pickerItem[aria-current='true'] {
+  background: var(--accent);
+}
+
+.option,
+.format,
+.discount {
+  min-height: 52px;
+  border-radius: var(--radius-control);
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--foreground);
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.option:hover,
+.format:hover,
+.discount:hover {
+  border-color: var(--primary);
+}
+
+.option:focus-visible,
+.format:focus-visible,
+.discount:focus-visible,
+.photoDrop:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.option[aria-pressed='true'],
+.discount[aria-checked='true'] {
+  background: var(--inverse-bg);
+  color: var(--inverse-fg);
+  border-color: var(--inverse-bg);
+}
+
+.format {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.format[aria-pressed='true'] {
+  border: 2px solid var(--foreground);
+}
+
+.discounts {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.discount {
+  min-height: 44px;
+  font-size: 0.9rem;
+}
+
+.photoDrop {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-card);
+  background: transparent;
+  color: var(--foreground);
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.photoDrop:hover {
+  border-color: var(--primary);
+  background: var(--accent);
+}
+
+.photoRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.photoPreview {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: var(--radius-control);
+}
+
+.smallButton {
+  min-height: 44px;
+  padding-inline: 16px;
+  border-radius: var(--radius-control);
+  font-weight: 700;
+}
+
+.iconButton {
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+}
+
+.hint {
+  font-size: 0.82rem;
+  color: var(--text-subtle);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.input {
+  height: 48px;
+  border-radius: var(--radius-control);
+  background: var(--card);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.fieldError {
+  font-size: 0.85rem;
+  color: var(--status-critico-fg);
+}

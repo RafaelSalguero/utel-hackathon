@@ -1,0 +1,4 @@
+sku,producto,variante,categoria,precio,costo,stock,fecha_venta,id_pedido,cantidad,precio_venta
+BOL-001-1,Bolsa tote de lona,Natural,Bolsas,319,120,17,2026-06-24,1001,1,319
+CAF-001,Café de olla molido 250 g,250 g,,179,70,14,2026-06-24,1001,1,179
+CAR-220,Cargador USB-C 20W,Blanco,Accesorios para celular,249,90,25,2026-06-24,1002,2,249

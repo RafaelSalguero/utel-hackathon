@@ -1,0 +1,11 @@
+.chart {
+  height: 150px;
+  width: 100%;
+  border-bottom: 1px solid var(--border);
+}
+
+.foot {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}

@@ -1,0 +1,36 @@
+.search {
+  position: relative;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-subtle);
+  pointer-events: none;
+}
+
+.searchInput {
+  height: 52px;
+  padding-left: 48px;
+  border-radius: var(--radius-card);
+  background: var(--card);
+  font-size: 1rem;
+}
+
+.list {
+  background: var(--card);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+
+.list li + li {
+  border-top: 1px solid var(--border);
+}
+
+.empty {
+  text-align: center;
+  color: var(--text-subtle);
+  padding: 32px 16px;
+}

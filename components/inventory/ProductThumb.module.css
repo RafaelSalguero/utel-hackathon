@@ -1,0 +1,19 @@
+.thumb {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-control);
+  background: var(--surface-tint);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.thumb[data-size='lg'] {
+  width: 64px;
+  height: 64px;
+  font-size: 2rem;
+  border-radius: var(--radius-card);
+  background: var(--card);
+}

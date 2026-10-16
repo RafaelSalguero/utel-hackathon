@@ -1,0 +1,28 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.copy {
+  min-height: 44px;
+  padding-inline: 16px;
+  border-radius: var(--radius-control);
+  font-weight: 700;
+}
+
+.copyText {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.tags {
+  margin-top: 10px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--primary-strong);
+}

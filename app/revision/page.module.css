@@ -1,0 +1,89 @@
+.file {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fileIcon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-control);
+  background: var(--accent);
+  color: var(--primary);
+}
+
+.fileInfo {
+  min-width: 0;
+}
+
+.fileName {
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileMeta {
+  font-size: 0.82rem;
+  color: var(--text-subtle);
+}
+
+.countValue {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.countLabel {
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.errors {
+  border-radius: var(--radius-card);
+  padding: 16px;
+  background: var(--status-critico-bg);
+  color: var(--status-critico-fg);
+}
+
+.errorsTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.errorList {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.more {
+  margin-top: 6px;
+  font-size: 0.85rem;
+}

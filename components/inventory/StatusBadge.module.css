@@ -1,0 +1,36 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mark {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.badge[data-status='por_agotarse'] {
+  background: var(--status-critico-bg);
+  color: var(--status-critico-fg);
+}
+
+.badge[data-status='lento'] {
+  background: var(--status-lento-bg);
+  color: var(--status-lento-fg);
+}
+
+.badge[data-status='lento'] .mark {
+  border-radius: 1px;
+}
+
+.badge[data-status='sano'] {
+  background: var(--status-sano-bg);
+  color: var(--status-sano-fg);
+}

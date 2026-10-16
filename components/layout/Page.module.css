@@ -1,0 +1,105 @@
+/* Shared page scaffolding: one fluid, centered, single-column layout. */
+.page {
+  width: 100%;
+  max-width: var(--page-max);
+  margin-inline: auto;
+  padding: 24px 16px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100dvh;
+}
+
+.withNav {
+  padding-bottom: calc(var(--nav-height) + 32px + env(safe-area-inset-bottom));
+}
+
+.title {
+  font-size: 1.75rem;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--foreground);
+}
+
+.subtitle {
+  color: var(--text-subtle);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.card {
+  background: var(--card);
+  color: var(--card-foreground);
+  border-radius: var(--radius-card);
+  padding: 16px;
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.cardMeta {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+  white-space: nowrap;
+}
+
+.sectionLabel {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Full-width actions pinned above the bottom nav (or the screen edge). */
+.stickyActions {
+  position: sticky;
+  bottom: calc(var(--nav-height) + 12px + env(safe-area-inset-bottom));
+  margin-top: auto;
+  padding-top: 8px;
+  z-index: 5;
+}
+
+.stickyActionsNoNav {
+  bottom: calc(12px + env(safe-area-inset-bottom));
+}
+
+.bigButton {
+  width: 100%;
+  min-height: 52px;
+  border-radius: var(--radius-control);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.notice {
+  border-radius: var(--radius-control);
+  padding: 12px 14px;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  background: var(--status-lento-bg);
+  color: var(--status-lento-fg);
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

@@ -1,0 +1,36 @@
+.skeleton {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-card);
+  background: var(--surface-tint);
+}
+
+.loadingText {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-subtle);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.actionButton {
+  min-height: 48px;
+  padding-inline: 18px;
+  border-radius: var(--radius-control);
+  font-weight: 700;
+  background: var(--card);
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}

@@ -1,0 +1,81 @@
+.card {
+  background: var(--accent);
+  color: var(--accent-foreground);
+  border-radius: var(--radius-card);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.title svg {
+  color: var(--primary);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.text {
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.text strong,
+.link {
+  font-weight: 800;
+}
+
+.link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--primary);
+  text-underline-offset: 3px;
+}
+
+.disclaimer {
+  font-size: 0.8rem;
+  color: var(--text-subtle);
+}
+
+.skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeleton,
+.skeletonShort {
+  height: 18px;
+  border-radius: 6px;
+  background: color-mix(in oklch, var(--primary) 18%, var(--accent));
+}
+
+.skeletonShort {
+  width: 60%;
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.92rem;
+}
+
+.retry {
+  min-height: 44px;
+  padding-inline: 16px;
+  border-radius: var(--radius-control);
+  font-weight: 700;
+}

@@ -1,0 +1,170 @@
+/* Sizes are in real image pixels (1080 wide); the frame scales the template down. */
+
+.frame {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+}
+
+.template {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: top left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 88px 88px 96px;
+  font-family: var(--font-jakarta), system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  min-height: 72px;
+}
+
+.brand {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.tag {
+  padding: 14px 32px;
+  border-radius: 999px;
+  font-size: 32px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.middle {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+}
+
+.template[data-formato='9:16'] .middle {
+  flex-direction: column;
+  text-align: center;
+  gap: 64px;
+}
+
+.circle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 340px;
+  height: 340px;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.template[data-formato='9:16'] .circle {
+  width: 520px;
+  height: 520px;
+}
+
+.emoji {
+  font-size: 170px;
+  line-height: 1;
+}
+
+.template[data-formato='9:16'] .emoji {
+  font-size: 260px;
+}
+
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.headline {
+  min-width: 0;
+}
+
+.title {
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+
+/* 1:1 leaves ~510px beside the circle; short headlines must stay on one line. */
+.title[data-size='xl'] {
+  font-size: 168px;
+  white-space: nowrap;
+}
+
+.title[data-size='lg'] {
+  font-size: 104px;
+}
+
+.title[data-size='md'] {
+  font-size: 76px;
+}
+
+.template[data-formato='9:16'] .title[data-size='xl'] {
+  font-size: 260px;
+}
+
+.template[data-formato='9:16'] .title[data-size='lg'] {
+  font-size: 150px;
+}
+
+.template[data-formato='9:16'] .title[data-size='md'] {
+  font-size: 104px;
+}
+
+.subtitle {
+  margin-top: 20px;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.productBlock {
+  min-width: 0;
+}
+
+.product {
+  font-size: 84px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.price {
+  margin-top: 12px;
+  font-size: 46px;
+}
+
+.before {
+  opacity: 0.8;
+}
+
+.qr {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 24px;
+  background: #ffffff; /* QR codes need a light quiet zone regardless of palette */
+  color: #111111;
+  font-size: 24px;
+  font-weight: 700;
+}

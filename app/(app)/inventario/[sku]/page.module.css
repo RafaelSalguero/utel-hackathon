@@ -1,0 +1,22 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerText {
+  min-width: 0;
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+.meta {
+  font-size: 0.9rem;
+  color: var(--text-subtle);
+  margin-top: 2px;
+}
