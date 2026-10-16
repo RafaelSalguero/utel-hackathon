@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  devIndicators: false,
   experimental: {
     // StockIA's screens read data that exists only in the browser (React Context),
     // so the server can never prerender them. Validate only segments that opt in
